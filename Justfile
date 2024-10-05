@@ -1,5 +1,5 @@
 OUTPUT_DIR := "docs"
-C3_FILES := `find . -name "*.c3" | tr '\n' ' '`
+C3_FILES := `find src -type f -name "*.c3" | tr '\n' ' '`
 
 compile:
     c3c static-lib --lib raylib5 -D PLATFORM_WEB --reloc=none --target wasm32 -O1 -g0 --link-libc=yes --use-stdlib=yes -o {{OUTPUT_DIR}}/demo {{C3_FILES}}

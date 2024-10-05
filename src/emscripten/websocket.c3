@@ -1,4 +1,4 @@
-module ws;
+module ems::ws;
 struct CreateAttributes @extern("EmscriptenWebSocketCreateAttributes") {
   // The target URL to connect to. This string can point to a stack local variable, the string is read immediately at a call to emscripten_websocket_new().
   char *url;

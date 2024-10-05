@@ -1,4 +1,6 @@
-fault EmscriptenError{
+module ems;
+
+fault Error{
     NOT_SUPPORTED,
     FAILED_NOT_DEFERRED,
     INVALID_TARGET,
