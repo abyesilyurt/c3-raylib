@@ -1,0 +1,10 @@
+fault EmscriptenError{
+    NOT_SUPPORTED,
+    FAILED_NOT_DEFERRED,
+    INVALID_TARGET,
+    UNKNOWN_TARGET,
+    INVALID_PARAM,
+    FAILED,
+    NO_DATA,
+    TIMED_OUT
+}

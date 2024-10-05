@@ -604,40 +604,40 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  28196: () => { if (document.fullscreenElement) return 1; },  
- 28242: () => { return document.getElementById('canvas').width; },  
- 28294: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 28362: () => { document.exitFullscreen(); },  
- 28389: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 28462: () => { if (document.fullscreenElement) return 1; },  
- 28508: () => { return document.getElementById('canvas').width; },  
- 28560: () => { return screen.width; },  
- 28585: () => { document.exitFullscreen(); },  
- 28612: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 28745: () => { if (document.fullscreenElement) return 1; },  
- 28791: () => { return document.getElementById('canvas').width; },  
- 28843: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 28911: () => { if (document.fullscreenElement) return 1; },  
- 28957: () => { return document.getElementById('canvas').width; },  
- 29009: () => { return screen.width; },  
- 29034: () => { if (document.fullscreenElement) return 1; },  
- 29080: () => { return document.getElementById('canvas').width; },  
- 29132: () => { return screen.width; },  
- 29157: () => { document.exitFullscreen(); },  
- 29184: () => { if (document.fullscreenElement) return 1; },  
- 29230: () => { return document.getElementById('canvas').width; },  
- 29282: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 29350: () => { document.exitFullscreen(); },  
- 29377: () => { return screen.width; },  
- 29402: () => { return screen.height; },  
- 29428: () => { return window.screenX; },  
- 29455: () => { return window.screenY; },  
- 29482: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 29535: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 29606: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 29663: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 29734: () => { if (document.fullscreenElement) return 1; },  
- 29780: () => { if (document.pointerLockElement) return 1; }
+  28520: () => { if (document.fullscreenElement) return 1; },  
+ 28566: () => { return document.getElementById('canvas').width; },  
+ 28618: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 28686: () => { document.exitFullscreen(); },  
+ 28713: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 28786: () => { if (document.fullscreenElement) return 1; },  
+ 28832: () => { return document.getElementById('canvas').width; },  
+ 28884: () => { return screen.width; },  
+ 28909: () => { document.exitFullscreen(); },  
+ 28936: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 29069: () => { if (document.fullscreenElement) return 1; },  
+ 29115: () => { return document.getElementById('canvas').width; },  
+ 29167: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 29235: () => { if (document.fullscreenElement) return 1; },  
+ 29281: () => { return document.getElementById('canvas').width; },  
+ 29333: () => { return screen.width; },  
+ 29358: () => { if (document.fullscreenElement) return 1; },  
+ 29404: () => { return document.getElementById('canvas').width; },  
+ 29456: () => { return screen.width; },  
+ 29481: () => { document.exitFullscreen(); },  
+ 29508: () => { if (document.fullscreenElement) return 1; },  
+ 29554: () => { return document.getElementById('canvas').width; },  
+ 29606: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 29674: () => { document.exitFullscreen(); },  
+ 29701: () => { return screen.width; },  
+ 29726: () => { return screen.height; },  
+ 29752: () => { return window.screenX; },  
+ 29779: () => { return window.screenY; },  
+ 29806: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 29859: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 29930: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 29987: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 30058: () => { if (document.fullscreenElement) return 1; },  
+ 30104: () => { if (document.pointerLockElement) return 1; }
 };
 function GetWindowInnerWidth() { return window.innerWidth; }
 function GetWindowInnerHeight() { return window.innerHeight; }
@@ -7049,6 +7049,159 @@ function GetWindowInnerHeight() { return window.innerHeight; }
   
   var _emscripten_set_window_title = (title) => document.title = UTF8ToString(title);
 
+  class HandleAllocator {
+      constructor() {
+        // TODO(https://github.com/emscripten-core/emscripten/issues/21414):
+        // Use inline field declarations.
+        this.allocated = [undefined];
+        this.freelist = [];
+      }
+      get(id) {
+        return this.allocated[id];
+      }
+      has(id) {
+        return this.allocated[id] !== undefined;
+      }
+      allocate(handle) {
+        var id = this.freelist.pop() || this.allocated.length;
+        this.allocated[id] = handle;
+        return id;
+      }
+      free(id) {
+        // Set the slot to `undefined` rather than using `delete` here since
+        // apparently arrays with holes in them can be less efficient.
+        this.allocated[id] = undefined;
+        this.freelist.push(id);
+      }
+    }
+  var webSockets = new HandleAllocator();;
+  
+  var WS = {
+  socketEvent:null,
+  getSocket(socketId) {
+        if (!webSockets.has(socketId)) {
+          return 0;
+        }
+        return webSockets.get(socketId);
+      },
+  getSocketEvent(socketId) {
+        // Singleton event pointer.  Use EmscriptenWebSocketCloseEvent, which is
+        // the largest event struct
+        this.socketEvent ||= _malloc(520);
+        HEAPU32[((this.socketEvent)>>2)] = socketId;
+        return this.socketEvent;
+      },
+  };
+  
+  var _emscripten_websocket_new = (createAttributes) => {
+      if (typeof WebSocket == 'undefined') {
+        return -1;
+      }
+      if (!createAttributes) {
+        return -5;
+      }
+  
+      var url = UTF8ToString(HEAPU32[((createAttributes)>>2)]);
+      var protocols = HEAPU32[(((createAttributes)+(4))>>2)]
+      // TODO: Add support for createOnMainThread==false; currently all WebSocket connections are created on the main thread.
+      // var createOnMainThread = HEAP8[createAttributes+2];
+  
+      var socket = protocols ? new WebSocket(url, UTF8ToString(protocols).split(',')) : new WebSocket(url);
+      // We always marshal received WebSocket data back to Wasm, so enable receiving the data as arraybuffers for easy marshalling.
+      socket.binaryType = 'arraybuffer';
+      // TODO: While strictly not necessary, this ID would be good to be unique across all threads to avoid confusion.
+      var socketId = webSockets.allocate(socket);
+  
+      return socketId;
+    };
+
+  
+  var _emscripten_websocket_send_utf8_text = (socketId, textData) => {
+      var socket = WS.getSocket(socketId);
+      if (!socket) {
+        return -3;
+      }
+  
+      var str = UTF8ToString(textData);
+      socket.send(str);
+      return 0;
+    };
+
+  
+  var _emscripten_websocket_set_onclose_callback_on_thread = (socketId, userData, callbackFunc, thread) => {
+      var socket = WS.getSocket(socketId);
+      if (!socket) {
+        return -3;
+      }
+  
+      socket.onclose = function(e) {
+        var eventPtr = WS.getSocketEvent(socketId);
+        HEAP8[(eventPtr)+(4)] = e.wasClean,
+        HEAP16[(((eventPtr)+(6))>>1)] = e.code,
+        stringToUTF8(e.reason, eventPtr + 8, 512);
+        ((a1, a2, a3) => dynCall_iiii(callbackFunc, a1, a2, a3))(0/*TODO*/, eventPtr, userData);
+      }
+      return 0;
+    };
+
+  var _emscripten_websocket_set_onerror_callback_on_thread = (socketId, userData, callbackFunc, thread) => {
+      var socket = WS.getSocket(socketId);
+      if (!socket) {
+        return -3;
+      }
+  
+      socket.onerror = function(e) {
+        var eventPtr = WS.getSocketEvent(socketId);
+        ((a1, a2, a3) => dynCall_iiii(callbackFunc, a1, a2, a3))(0/*TODO*/, eventPtr, userData);
+      }
+      return 0;
+    };
+
+  
+  
+  
+  var _emscripten_websocket_set_onmessage_callback_on_thread = (socketId, userData, callbackFunc, thread) => {
+      var socket = WS.getSocket(socketId);
+      if (!socket) {
+        return -3;
+      }
+  
+      socket.onmessage = function(e) {
+        var isText = typeof e.data == 'string';
+        if (isText) {
+          var buf = stringToNewUTF8(e.data);
+          var len = lengthBytesUTF8(e.data)+1;
+        } else {
+          var len = e.data.byteLength;
+          var buf = _malloc(len);
+          HEAP8.set(new Uint8Array(e.data), buf);
+        }
+        var eventPtr = WS.getSocketEvent(socketId);
+        HEAPU32[(((eventPtr)+(4))>>2)] = buf,
+        HEAP32[(((eventPtr)+(8))>>2)] = len,
+        HEAP8[(eventPtr)+(12)] = isText,
+        ((a1, a2, a3) => dynCall_iiii(callbackFunc, a1, a2, a3))(0/*TODO*/, eventPtr, userData);
+        _free(buf);
+      }
+      return 0;
+    };
+
+  var _emscripten_websocket_set_onopen_callback_on_thread = (socketId, userData, callbackFunc, thread) => {
+  // TODO:
+  //    if (thread == 2 ||
+  //      (thread == _pthread_self()) return emscripten_websocket_set_onopen_callback_on_calling_thread(socketId, userData, callbackFunc);
+      var socket = WS.getSocket(socketId);
+      if (!socket) {
+        return -3;
+      }
+  
+      socket.onopen = function(e) {
+        var eventPtr = WS.getSocketEvent(socketId);
+        ((a1, a2, a3) => dynCall_iiii(callbackFunc, a1, a2, a3))(0/*TODO*/, eventPtr, userData);
+      }
+      return 0;
+    };
+
 
   function _fd_close(fd) {
   try {
@@ -9153,6 +9306,18 @@ var wasmImports = {
   emscripten_set_touchstart_callback_on_thread: _emscripten_set_touchstart_callback_on_thread,
   /** @export */
   emscripten_set_window_title: _emscripten_set_window_title,
+  /** @export */
+  emscripten_websocket_new: _emscripten_websocket_new,
+  /** @export */
+  emscripten_websocket_send_utf8_text: _emscripten_websocket_send_utf8_text,
+  /** @export */
+  emscripten_websocket_set_onclose_callback_on_thread: _emscripten_websocket_set_onclose_callback_on_thread,
+  /** @export */
+  emscripten_websocket_set_onerror_callback_on_thread: _emscripten_websocket_set_onerror_callback_on_thread,
+  /** @export */
+  emscripten_websocket_set_onmessage_callback_on_thread: _emscripten_websocket_set_onmessage_callback_on_thread,
+  /** @export */
+  emscripten_websocket_set_onopen_callback_on_thread: _emscripten_websocket_set_onopen_callback_on_thread,
   /** @export */
   exit: _exit,
   /** @export */
