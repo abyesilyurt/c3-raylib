@@ -604,40 +604,40 @@ var tempI64;
 // === Body ===
 
 var ASM_CONSTS = {
-  28180: () => { if (document.fullscreenElement) return 1; },  
- 28226: () => { return document.getElementById('canvas').width; },  
- 28278: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 28346: () => { document.exitFullscreen(); },  
- 28373: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
- 28446: () => { if (document.fullscreenElement) return 1; },  
- 28492: () => { return document.getElementById('canvas').width; },  
- 28544: () => { return screen.width; },  
- 28569: () => { document.exitFullscreen(); },  
- 28596: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
- 28729: () => { if (document.fullscreenElement) return 1; },  
- 28775: () => { return document.getElementById('canvas').width; },  
- 28827: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 28895: () => { if (document.fullscreenElement) return 1; },  
- 28941: () => { return document.getElementById('canvas').width; },  
- 28993: () => { return screen.width; },  
- 29018: () => { if (document.fullscreenElement) return 1; },  
- 29064: () => { return document.getElementById('canvas').width; },  
- 29116: () => { return screen.width; },  
- 29141: () => { document.exitFullscreen(); },  
- 29168: () => { if (document.fullscreenElement) return 1; },  
- 29214: () => { return document.getElementById('canvas').width; },  
- 29266: () => { return parseInt(document.getElementById('canvas').style.width); },  
- 29334: () => { document.exitFullscreen(); },  
- 29361: () => { return screen.width; },  
- 29386: () => { return screen.height; },  
- 29412: () => { return window.screenX; },  
- 29439: () => { return window.screenY; },  
- 29466: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
- 29519: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
- 29590: () => { document.getElementById('canvas').style.cursor = 'none'; },  
- 29647: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
- 29718: () => { if (document.fullscreenElement) return 1; },  
- 29764: () => { if (document.pointerLockElement) return 1; }
+  28196: () => { if (document.fullscreenElement) return 1; },  
+ 28242: () => { return document.getElementById('canvas').width; },  
+ 28294: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 28362: () => { document.exitFullscreen(); },  
+ 28389: () => { setTimeout(function() { Module.requestFullscreen(false, false); }, 100); },  
+ 28462: () => { if (document.fullscreenElement) return 1; },  
+ 28508: () => { return document.getElementById('canvas').width; },  
+ 28560: () => { return screen.width; },  
+ 28585: () => { document.exitFullscreen(); },  
+ 28612: () => { setTimeout(function() { Module.requestFullscreen(false, true); setTimeout(function() { canvas.style.width="unset"; }, 100); }, 100); },  
+ 28745: () => { if (document.fullscreenElement) return 1; },  
+ 28791: () => { return document.getElementById('canvas').width; },  
+ 28843: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 28911: () => { if (document.fullscreenElement) return 1; },  
+ 28957: () => { return document.getElementById('canvas').width; },  
+ 29009: () => { return screen.width; },  
+ 29034: () => { if (document.fullscreenElement) return 1; },  
+ 29080: () => { return document.getElementById('canvas').width; },  
+ 29132: () => { return screen.width; },  
+ 29157: () => { document.exitFullscreen(); },  
+ 29184: () => { if (document.fullscreenElement) return 1; },  
+ 29230: () => { return document.getElementById('canvas').width; },  
+ 29282: () => { return parseInt(document.getElementById('canvas').style.width); },  
+ 29350: () => { document.exitFullscreen(); },  
+ 29377: () => { return screen.width; },  
+ 29402: () => { return screen.height; },  
+ 29428: () => { return window.screenX; },  
+ 29455: () => { return window.screenY; },  
+ 29482: ($0) => { navigator.clipboard.writeText(UTF8ToString($0)); },  
+ 29535: ($0) => { document.getElementById("canvas").style.cursor = UTF8ToString($0); },  
+ 29606: () => { document.getElementById('canvas').style.cursor = 'none'; },  
+ 29663: ($0) => { document.getElementById('canvas').style.cursor = UTF8ToString($0); },  
+ 29734: () => { if (document.fullscreenElement) return 1; },  
+ 29780: () => { if (document.pointerLockElement) return 1; }
 };
 function GetWindowInnerWidth() { return window.innerWidth; }
 function GetWindowInnerHeight() { return window.innerHeight; }
@@ -9316,7 +9316,6 @@ var wasmImports = {
 };
 var wasmExports = createWasm();
 var ___wasm_call_ctors = () => (___wasm_call_ctors = wasmExports['__wasm_call_ctors'])();
-var __start = Module['__start'] = () => (__start = Module['__start'] = wasmExports['_start'])();
 var _main = Module['_main'] = (a0, a1) => (_main = Module['_main'] = wasmExports['main'])(a0, a1);
 var _malloc = (a0) => (_malloc = wasmExports['malloc'])(a0);
 var _free = (a0) => (_free = wasmExports['free'])(a0);
