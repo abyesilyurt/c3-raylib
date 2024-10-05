@@ -16,6 +16,7 @@ fn void update()
 
     rl::endDrawing();
 }
+
 fn void main() @export("_start")
 {
     rl::setTraceLogLevel(rl::TraceLogLevel.WARNING);
